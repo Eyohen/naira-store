@@ -11,7 +11,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.90.20",
     "axios": "^1.13.5",
-    "coinley-pay": "^0.0.34",
+    "coinley-pay": "^0.0.39",
     "lucide-react": "^0.563.0",
     "next": "16.1.6",
     "react": "19.2.3",
