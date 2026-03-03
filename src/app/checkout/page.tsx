@@ -357,8 +357,8 @@ export default function CheckoutPage() {
   const [orderId, setOrderId] = useState<string | null>(null);
 
   // Merchant configuration
-  const MERCHANT_PUBLIC_KEY = 'pk_6ed51328523d9bc9d8f69e73271342bd';
-  const API_URL = 'https://hub.coinley.io';
+  const MERCHANT_PUBLIC_KEY = 'pk_7afacf14545fe11927df8aa43ab62816';
+  const API_URL = 'https://talented-mercy-production.up.railway.app';
 
   // Fetch merchant wallet configuration on component mount
   useEffect(() => {
