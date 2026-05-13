@@ -325,7 +325,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Package, Loader2 } from 'lucide-react';
@@ -424,26 +424,44 @@ export default function CheckoutPage() {
     }
   };
 
-  const handlePaymentSuccess = async (paymentId: string, transactionHash: string, paymentDetails: unknown) => {
+  const handlePaymentSuccess = useCallback(async (paymentId: string, transactionHash: string, paymentDetails: unknown) => {
     console.log('Payment success:', { paymentId, transactionHash, paymentDetails });
     setPaymentSuccess(true);
     clearCart();
-  };
+  }, [clearCart]);
 
-  const handlePaymentError = (error: string) => {
+  const handlePaymentError = useCallback((error: string) => {
     console.error('Payment error:', error);
     setError(`Payment failed: ${error}`);
     setProcessing(false);
-  };
+  }, []);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setIsPaymentModalOpen(false);
     setProcessing(false);
 
     if (paymentSuccess) {
       router.push(`/order-success?orderId=${orderId}`);
     }
-  };
+  }, [paymentSuccess, orderId, router]);
+
+  const paymentConfig = useMemo(() => ({
+    amount: subtotal,
+    currency: 'NGN',
+    customerEmail,
+    merchantName: 'NairaElectronics',
+    merchantWalletAddresses: merchantWallets,
+    metadata: {
+      orderId,
+      customerEmail,
+      items: cartItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+    },
+  }), [subtotal, customerEmail, merchantWallets, orderId, cartItems]);
 
   if (cartItems.length === 0 && !paymentSuccess) {
     return (
@@ -610,23 +628,7 @@ export default function CheckoutPage() {
       <CoinleyPayment
         publicKey={MERCHANT_PUBLIC_KEY}
         apiUrl={API_URL}
-        config={{
-          amount: subtotal,
-          currency: 'NGN',
-          customerEmail: customerEmail,
-          merchantName: 'NairaElectronics',
-          merchantWalletAddresses: merchantWallets,
-          metadata: {
-            orderId: orderId,
-            customerEmail: customerEmail,
-            items: cartItems.map(item => ({
-              id: item.id,
-              name: item.name,
-              quantity: item.quantity,
-              price: item.price
-            }))
-          }
-        }}
+        config={paymentConfig}
         onSuccess={handlePaymentSuccess}
         onError={handlePaymentError}
         onClose={handleCloseModal}
