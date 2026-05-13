@@ -333,16 +333,16 @@ import { useCart } from '@/context/CartContext';
 import dynamic from 'next/dynamic';
 
 // Dynamically import the Coinley payment component to avoid SSR issues
-const EnhancedSimpleCoinleyPayment = dynamic(
-  () => import('coinley-test').then(mod => mod.EnhancedSimpleCoinleyPayment),
+const CoinleyPayment = dynamic(
+  () => import('coinley-pay').then(mod => mod.RedesignedCoinleyPayment),
   { ssr: false }
 );
 
 // Import PaymentAPI for fetching merchant wallets
-import { PaymentAPI } from 'coinley-test';
+import { PaymentAPI } from 'coinley-pay';
 
 // Import Coinley styles
-import 'coinley-test/dist/style.css';
+import 'coinley-pay/dist/style.css';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -607,7 +607,7 @@ export default function CheckoutPage() {
       </div>
 
       {/* Coinley Payment Modal */}
-      <EnhancedSimpleCoinleyPayment
+      <CoinleyPayment
         publicKey={MERCHANT_PUBLIC_KEY}
         apiUrl={API_URL}
         config={{
@@ -636,3 +636,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
